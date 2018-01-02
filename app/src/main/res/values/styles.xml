@@ -8,4 +8,8 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="AwesomeIcon">
+        <item name="fontFamily">@font/font_awesome</item>
+        <item name="android:textSize">18sp</item>
+    </style>
 </resources>
