@@ -15,7 +15,8 @@ import java.util.*
 
 class TodoListAdapter(
         private val context: AppCompatActivity,
-        private val list: ArrayList<TodoItem>
+        private val list: ArrayList<TodoItem>,
+        private val todoItemDAO: TodoItemDAO
 ) : RecyclerView.Adapter<TodoListAdapter.TodoItemViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): TodoItemViewHolder {
@@ -40,17 +41,18 @@ class TodoListAdapter(
 
         init {
             todoItemView.findViewById<Button>(R.id.todoItemDeleteButton).setOnClickListener {
-                list.removeAt(adapterPosition)
+                val removedItem = list.removeAt(adapterPosition)
+                todoItemDAO.delete(removedItem.id)
                 notifyItemRemoved(adapterPosition)
             }
             todoItemView.findViewById<Button>(R.id.todoItemEditButton).setOnClickListener {
                 val intent = Intent(context, EditTodoItemActivity::class.java)
-                intent.putExtra(EDIT_ITEM, list[adapterPosition])
-                intent.putExtra(ITEM_INDEX, adapterPosition)
+                intent.putExtra(ITEM_ID, list[adapterPosition].id)
                 context.startActivityForResult(intent, REQUEST_CODE)
             }
             doneButton.setOnClickListener {
                 list[adapterPosition].done = true
+                todoItemDAO.update(list[adapterPosition])
                 notifyItemChanged(adapterPosition)
             }
         }

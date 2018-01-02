@@ -10,12 +10,14 @@ import kotlinx.android.synthetic.main.activity_edit_todo_item.*
 
 class EditTodoItemActivity : AppCompatActivity() {
 
+    private val todoItemDAO = TodoItemDAO(this)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_todo_item)
 
-        val itemIndex = intent.getIntExtra(ITEM_INDEX, -1)
-        intent.getParcelableExtra<TodoItem>(EDIT_ITEM)?.let {
+        val editedItem = todoItemDAO.fetchOne(intent.getIntExtra(ITEM_ID, -1))
+        editedItem?.let {
             taskName.setText(it.name, TextView.BufferType.EDITABLE)
             taskDescription.setText(it.description, TextView.BufferType.EDITABLE)
         }
@@ -27,15 +29,12 @@ class EditTodoItemActivity : AppCompatActivity() {
                 Toast.makeText(this, "Enter Task Description", Toast.LENGTH_LONG).show()
             } else {
                 val answerIntent = Intent()
-                answerIntent.putExtra(ITEM_INDEX, itemIndex)
-                answerIntent.putExtra(EDIT_ITEM, TodoItem(
-                        name = taskName.text.toString(),
-                        description = taskDescription.text.toString()
-                ))
+                answerIntent.putExtra(ITEM_NAME, taskName.text.toString())
+                answerIntent.putExtra(ITEM_DESCRIPTION, taskDescription.text.toString())
+                editedItem?.let { answerIntent.putExtra(ITEM_ID, it.id) }
                 setResult(RESULT_OK, answerIntent)
                 finish()
             }
-
         }
     }
 }

@@ -13,11 +13,15 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
 
     private val list = ArrayList<TodoItem>()
-    private val listAdapter = TodoListAdapter(this, list)
+    private val todoItemDAO = TodoItemDAO(this)
+    private val listAdapter = TodoListAdapter(this, list, todoItemDAO)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        list.clear()
+        list.addAll(todoItemDAO.fetchAll())
 
         todoList.layoutManager = LinearLayoutManager(this)
         todoList.adapter = listAdapter
@@ -42,17 +46,21 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode != REQUEST_CODE || resultCode != Activity.RESULT_OK) return
         data?.let {
-            val index = it.getIntExtra(ITEM_INDEX, -1)
-            it.getParcelableExtra<TodoItem>(EDIT_ITEM)
-                    ?.let { item ->
-                        if (index > -1 && index < list.size) {
-                            list[index] = item
-                            listAdapter.notifyItemChanged(index)
-                        } else {
-                            list.add(item)
-                            listAdapter.notifyDataSetChanged()
-                        }
-                    }
+            val id = it.getIntExtra(ITEM_ID, -1)
+            val name = it.getStringExtra(ITEM_NAME)
+            val description = it.getStringExtra(ITEM_DESCRIPTION)
+            if (id == -1) {
+                val newItem = todoItemDAO.create(name, description)
+                list.add(newItem)
+                listAdapter.notifyItemInserted(list.size - 1)
+            } else {
+                val item = TodoItem(id, name, description)
+                val index = (0 until list.size)
+                        .find { list[it].id == id }!!
+                list[index] = item
+                todoItemDAO.update(item)
+                listAdapter.notifyItemChanged(index)
+            }
         }
     }
 }
