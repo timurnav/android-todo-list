@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -19,6 +20,13 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        fab.setOnClickListener {
+            val intent = Intent(this, EditTodoItemActivity::class.java)
+            startActivityForResult(intent, REQUEST_CODE)
+        }
+
+
 
         list.clear()
         list.addAll(todoItemDAO.fetchAll())
@@ -34,9 +42,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
 
-        if (item!!.itemId == R.id.add_menu_button) {
-            val intent = Intent(this, EditTodoItemActivity::class.java)
-            startActivityForResult(intent, REQUEST_CODE)
+        if (item!!.itemId == R.id.button_more_vert) {
+            Toast.makeText(this, "Drop menu", Toast.LENGTH_SHORT).show()
         }
 
         return super.onOptionsItemSelected(item)
