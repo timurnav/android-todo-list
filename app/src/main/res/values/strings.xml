@@ -2,10 +2,6 @@
     <string name="app_name">Todo-list</string>
     <string name="menu_title">Add TODO</string>
     <string name="todo_name_hint">Task name</string>
-
-    <string name="fa_done">\uf00c</string>
-    <string name="fa_edit">\uf040</string>
-    <string name="fa_delete">\uf1f8</string>
     <string name="todo_description_hint">Describe your task</string>
     <string name="save_button">Save</string>
 </resources>
